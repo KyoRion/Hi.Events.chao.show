@@ -137,6 +137,15 @@ export const Orders: React.FC = () => {
                     loading={downloadPending}
                     size="sm"
                 >
+                    {t`Import`}
+                </Button>
+                <Button
+                    onClick={() => handleExport(eventId)}
+                    rightSection={<IconDownload size={14}/>}
+                    color="green"
+                    loading={downloadPending}
+                    size="sm"
+                >
                     {t`Export`}
                 </Button>
             </ToolBar>
