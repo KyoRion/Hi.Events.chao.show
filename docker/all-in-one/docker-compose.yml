@@ -26,11 +26,18 @@ services:
       - MAIL_FROM_ADDRESS
       - MAIL_FROM_NAME
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
 
   postgres:
-    image: elestio/postgres:16
+    image: postgres:latest
     restart: always
+    container_name: postgres
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - chaoshow-network
     environment:
