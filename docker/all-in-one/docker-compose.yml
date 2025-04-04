@@ -28,6 +28,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    networks:
+      - chaoshow-network
 
   postgres:
     image: postgres:latest
