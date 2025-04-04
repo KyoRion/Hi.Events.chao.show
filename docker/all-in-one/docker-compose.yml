@@ -3,9 +3,9 @@ services:
     image: daveearley/hi.events-all-in-one:latest
     restart: always
     environment:
-      - VITE_FRONTEND_URL=https://${DOMAIN}
-      - APP_FRONTEND_URL=https://${DOMAIN}
-      - VITE_API_URL_CLIENT=https://${DOMAIN}/api
+      - VITE_FRONTEND_URL=http://${DOMAIN}
+      - APP_FRONTEND_URL=http://${DOMAIN}
+      - VITE_API_URL_CLIENT=http://${DOMAIN}/api
       - VITE_API_URL_SERVER=http://localhost:8080/api
       - VITE_STRIPE_PUBLISHABLE_KEY
       - LOG_CHANNEL=stderr
@@ -14,7 +14,7 @@ services:
       - JWT_SECRET
       - FILESYSTEM_PUBLIC_DISK=public
       - FILESYSTEM_PRIVATE_DISK=local
-      - APP_CDN_URL=https://${DOMAIN}/storage
+      - APP_CDN_URL=http://${DOMAIN}/storage
       - APP_DISABLE_REGISTRATION
       - DATABASE_URL=postgresql://postgres:secret@postgres:5432/hievents
       - STRIPE_PUBLIC_KEY
