@@ -109,14 +109,21 @@ export const CollectInformation = () => {
     };
 
     const mutation = useMutation({
-        mutationFn: (orderData: FinaliseOrderPayload) => orderClientPublic.finaliseOrder(Number(eventId), String(orderShortId), orderData),
-
+        // mutationFn: (orderData: FinaliseOrderPayload) => orderClientPublic.finaliseOrder(Number(eventId), String(orderShortId), orderData),
+        mutationFn: () => {
+            const nextPage = 'process-vnpay';
+            navigate(eventCheckoutPath(eventId, orderShortId, nextPage))
+        },
         onSuccess: (data) => {
-            const nextPage = order?.is_payment_required ? 'payment' : 'summary';
-            navigate(eventCheckoutPath(eventId, data.data.short_id, nextPage));
+            //TODO: Handle process payment VNPAY
+            const nextPage = 'process-vnpay';
+            navigate(eventCheckoutPath(eventId, data.data.short_id, nextPage))
+            // const nextPage = order?.is_payment_required ? 'payment' : 'summary';
+            // navigate(eventCheckoutPath(eventId, data.data.short_id, nextPage));
         },
 
         onError: (error: any) => {
+            const nextPage = 'process-vnpay';
             if (error?.response?.data?.errors && Object.keys(error?.response?.data?.errors).length > 0) {
                 form.setErrors(error.response.data.errors);
             } else if (error?.response?.data?.message) {
@@ -129,6 +136,8 @@ export const CollectInformation = () => {
                     navigate(eventHomepagePath(event as Event));
                 }
             }
+
+            navigate(eventCheckoutPath(eventId, orderShortId, nextPage), { state: error });
         }
     });
 

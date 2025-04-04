@@ -1,4 +1,18 @@
 services:
+  chaoshow-db:
+    image: mysql:8
+    container_name: chaoshow-db
+    restart: unless-stopped
+    tty: true
+    ports:
+      - 3306:3306
+    volumes:
+      - db-store:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=123123123 # mật khẩu root user
+      - TZ=Asia/Ho_Chi_Minh
+    networks:
+      - chaoshow-network
   hi-events-backend:
     build:
       context: ./../../backend
@@ -7,12 +21,12 @@ services:
     ports:
       - "8124:80"
     environment:
-      APP_KEY: ""
+      APP_KEY: "base64:kN8Rpvr+wSvQSJheEuRDWPUEakf8CkLHiXfSg5DHFv8="
       APP_SAAS_MODE_ENABLED: "true"
-      APP_FRONTEND_URL: ""
-      APP_CDN_URL: ""
+      APP_FRONTEND_URL: "localhost"
+      APP_CDN_URL: "localhost"
       FILESYSTEM_DISK: "s3-public"
-      JWT_SECRET: ""
+      JWT_SECRET: "7PaUVIkfAG79QxHLKJQLfv5wB+H5c/1tr/Gh6zz3hy8="
       LOG_CHANNEL: "stderr"
       AWS_ACCESS_KEY_ID: ""
       AWS_SECRET_ACCESS_KEY: ""
@@ -26,12 +40,12 @@ services:
       MAIL_PORT: "2525"
       MAIL_USERNAME: ""
       MAIL_PASSWORD: ""
-      DB_CONNECTION: "pgsql"
-      DB_HOST: ""
-      DB_PORT: ""
-      DB_DATABASE: ""
-      DB_USERNAME: ""
-      DB_PASSWORD: ""
+      DB_CONNECTION: "mysql"
+      DB_HOST: "chaoshow-db"
+      DB_PORT: "3306"
+      DB_DATABASE: "chaoshow"
+      DB_USERNAME: "root"
+      DB_PASSWORD: "123123123"
       REDIS_HOST: ""
       REDIS_PASSWORD: ""
       REDIS_USER: ""
@@ -40,3 +54,14 @@ services:
       QUEUE_CONNECTION: "redis"
       DATABASE_URL: ""
       STRIPE_WEBHOOK_SECRET: ""
+    networks:
+      - chaoshow-network
+
+volumes:
+  db-store:
+    driver: local
+
+networks:
+  chaoshow-network:
+    name: chaoshow-network
+    external: true

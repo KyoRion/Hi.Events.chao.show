@@ -1,0 +1,77 @@
+services:
+    app:
+        build:
+            context: ./.docker/php
+            dockerfile: Dockerfile
+        container_name: chaoshow-api-app
+        restart: unless-stopped
+        tty: true
+        command:
+          ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/supervisord.conf"]
+        volumes:
+            - "./:/var/www/html"
+            - ./.docker/php/php.ini:/usr/local/etc/php/php.ini
+            - ./.docker/php/opcache.ini:/usr/local/etc/php/conf.d/opcache.ini
+            - ./.docker/php/supervisord/conf.d:/etc/supervisor/conf.d
+            - ./.docker/php/supervisord/supervisord.conf:/etc/supervisor/supervisord.conf
+        depends_on:
+            - db
+            - redis
+        networks:
+            - chaoshow-network
+    nginx:
+        container_name: chaoshow-api-nginx
+        build:
+            context: ./.docker/nginx
+            dockerfile: Dockerfile
+        restart: unless-stopped
+        tty: true
+        environment:
+            - VIRTUAL_HOST=${APP_URL} # Environment variable needed for nginx proxy
+            - DOMAIN_NAME=${DOMAIN_NAME}
+        ports:
+            - 80:80
+            - 443:443
+        volumes:
+            - "./:/var/www/html"
+            - ./.docker/nginx/includes/:/etc/nginx/includes/:rw,cached
+            - ./.docker/nginx/templates/:/etc/nginx/templates/:rw,cached
+            - ../miniapp-reverse-proxy/certbot/conf:/etc/nginx/ssl/:ro
+        networks:
+            - chaoshow-network
+    db:
+        image: mysql:8
+        container_name: chaoshow-api-db
+        restart: unless-stopped
+        tty: true
+        ports:
+            - 3306:3306
+        volumes:
+            - db-store:/var/lib/mysql
+        environment:
+            - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:?err} # mật khẩu root user
+            - TZ=Asia/Ho_Chi_Minh
+        networks:
+            - chaoshow-network
+    redis:
+        build:
+            context: ./.docker/redis
+            dockerfile: Dockerfile
+        container_name: miniapp-api-redis
+        restart: unless-stopped
+        ports:
+            - 6379:6379
+        command: redis-server --appendonly yes --replica-read-only no --requirepass ${REDIS_PASSWORD:?err}
+        volumes:
+            - db-redis:/data
+        networks:
+            - chaoshow-network
+volumes:
+    db-store:
+        driver: local
+    db-redis:
+        driver: local
+networks:
+    chaoshow-network:
+        name: chaoshow-network
+        external: true

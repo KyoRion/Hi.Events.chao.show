@@ -400,6 +400,13 @@ export const router: RouteObject[] = [
                 }
             },
             {
+                path: ":orderShortId/process-vnpay",
+                async lazy() {
+                    const ProcessVNPAY = await import("./components/routes/product-widget/ProcessVNPAY");
+                    return {Component: ProcessVNPAY.default};
+                }
+            },
+            {
                 path: ":orderShortId/payment",
                 async lazy() {
                     const Payment = await import("./components/routes/product-widget/Payment");

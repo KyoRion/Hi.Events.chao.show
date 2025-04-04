@@ -18,6 +18,8 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
+use Sentry\State\Hub;
+use Sentry\State\HubInterface;
 use Stripe\StripeClient;
 
 class AppServiceProvider extends ServiceProvider
@@ -28,6 +30,9 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->bindDoctrineConnection();
         $this->bindStripeClient();
+        $this->app->bind(HubInterface::class, function ($app) {
+            return new Hub();
+        });
     }
 
     /**

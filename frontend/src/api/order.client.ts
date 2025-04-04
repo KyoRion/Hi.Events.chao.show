@@ -91,6 +91,17 @@ export const orderClient = {
         return new Blob([response.data]);
     },
 
+    importOrders: async (eventId: IdParam, formData: FormData) => {
+        const response = await api.post(`events/${eventId}/orders/import`, formData, {
+            headers: { "Content-Type": "multipart/form-data" }
+        });
+
+        console.log("RESPONSE IMPORT: " + response);
+
+        return response.data;
+
+    },
+
     markAsPaid: async (eventId: IdParam, orderId: IdParam) => {
         const response = await api.post<GenericDataResponse<Order>>('events/' + eventId + '/orders/' + orderId + '/mark-as-paid');
         return response.data;

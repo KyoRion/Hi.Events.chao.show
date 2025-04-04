@@ -6,6 +6,7 @@ use HiEvents\Exceptions\Stripe\CreatePaymentIntentFailedException;
 use HiEvents\Http\Actions\BaseAction;
 use HiEvents\Services\Application\Handlers\Order\Payment\Stripe\CreatePaymentIntentHandler;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
 class CreatePaymentIntentActionPublic extends BaseAction
@@ -22,6 +23,7 @@ class CreatePaymentIntentActionPublic extends BaseAction
         try {
             $createIntent = $this->createPaymentIntentHandler->handle($orderShortId);
         } catch (CreatePaymentIntentFailedException $e) {
+            Log::error($e->getMessage(), $e->getTrace());
             return $this->errorResponse($e->getMessage(), Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 

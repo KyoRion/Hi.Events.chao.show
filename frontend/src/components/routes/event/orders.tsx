@@ -79,6 +79,35 @@ export const Orders: React.FC = () => {
         setSearchParams(clearedFilters as QueryFilters, true); // Added true to replace instead of merge
     };
 
+    const handleImport = async (eventId: IdParam, event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        try {
+            await withLoadingNotification(async () => {
+                await orderClient.importOrders(eventId, formData);
+            }, {
+                loading: {
+                    title: t`Importing Orders`,
+                    message: t`Please wait while we process your orders...`
+                },
+                success: {
+                    title: t`Orders Imported`,
+                    message: t`Your orders have been imported successfully.`
+                },
+                error: {
+                    title: t`Failed to import orders`,
+                    message: t`Please check the file format and try again.`
+                }
+            });
+        } catch (error) {
+            console.error("Error importing orders:", error);
+        }
+    };
+
     const handleExport = async (eventId: IdParam) => {
         await withLoadingNotification(async () => {
                 setDownloadPending(true);
@@ -130,14 +159,14 @@ export const Orders: React.FC = () => {
                     />
                 )}
             >
-                <Button
-                    onClick={() => handleExport(eventId)}
-                    rightSection={<IconDownload size={14}/>}
-                    color="green"
-                    loading={downloadPending}
-                    size="sm"
-                >
+                <Button component="label" color="blue" size="sm">
                     {t`Import`}
+                    <input
+                        type="file"
+                        hidden
+                        accept=".xlsx,.csv"
+                        onChange={(e) => handleImport(eventId, e)}
+                    />
                 </Button>
                 <Button
                     onClick={() => handleExport(eventId)}
