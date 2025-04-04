@@ -16,7 +16,7 @@ services:
       - FILESYSTEM_PRIVATE_DISK=local
       - APP_CDN_URL=https://${DOMAIN}/storage
       - APP_DISABLE_REGISTRATION
-      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      - DATABASE_URL=postgresql://postgres:secret@postgres:5432/hievents
       - STRIPE_PUBLIC_KEY
       - STRIPE_SECRET_KEY
       - STRIPE_WEBHOOK_SECRET
