@@ -44,11 +44,11 @@ services:
       - POSTGRES_USER
       - POSTGRES_PASSWORD
     volumes:
-      - chaoshow_data:/var/lib/postgresql/data
+      - chaoshow_db:/var/lib/postgresql/data
 
 networks:
   chaoshow-network:
     external: true
 
 volumes:
-  chaoshow_data:
+  chaoshow_db:
